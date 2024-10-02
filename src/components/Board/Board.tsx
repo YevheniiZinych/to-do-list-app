@@ -103,54 +103,54 @@ export const Board: React.FC<BoardProps> = ({ data }) => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Container>
           {["ToDo", "In Progress", "Done"].map((status) => (
-            <>
-              <Droppable key={status} droppableId={status}>
-                {(provided) => (
-                  <Boards {...provided.droppableProps} ref={provided.innerRef}>
-                    <BoardTitle>{status}</BoardTitle>
-                    <BoardList>
-                      {localTodos
-                        ?.filter((todo) => todo.status === status)
-                        .map(({ id, title, description }, index) => (
-                          <Draggable key={id} draggableId={id} index={index}>
-                            {(provided) => (
-                              <CardItem
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={{
-                                  ...provided.draggableProps.style,
-                                }}
-                              >
-                                <CardTitle>{title}</CardTitle>
-                                <CardDescription>{description}</CardDescription>
-                                <CardBtnWrapp>
-                                  <ModalMain
-                                    text={"Edit card"}
-                                    id={id}
-                                    name={title}
-                                    descr={description}
-                                  />
+            <Droppable key={status} droppableId={status}>
+              {(provided) => (
+                <Boards
+                  key={status}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  <BoardTitle>{status}</BoardTitle>
+                  <BoardList>
+                    {localTodos
+                      ?.filter((todo) => todo.status === status)
+                      .map(({ id, title, description }, index) => (
+                        <Draggable key={id} draggableId={id} index={index}>
+                          {(provided) => (
+                            <CardItem
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={{
+                                ...provided.draggableProps.style,
+                              }}
+                            >
+                              <CardTitle>{title}</CardTitle>
+                              <CardDescription>{description}</CardDescription>
+                              <CardBtnWrapp>
+                                <ModalMain
+                                  text={"Edit card"}
+                                  id={id}
+                                  name={title}
+                                  descr={description}
+                                />
 
-                                  <DeleteBtn
-                                    onClick={() => handleDeleteTodo(id)}
-                                  >
-                                    Delete
-                                  </DeleteBtn>
-                                </CardBtnWrapp>
-                              </CardItem>
-                            )}
-                          </Draggable>
-                        ))}
-                    </BoardList>
+                                <DeleteBtn onClick={() => handleDeleteTodo(id)}>
+                                  Delete
+                                </DeleteBtn>
+                              </CardBtnWrapp>
+                            </CardItem>
+                          )}
+                        </Draggable>
+                      ))}
+                  </BoardList>
 
-                    <ModalMain status={status} text={"Add card"} />
+                  <ModalMain status={status} text={"Add card"} />
 
-                    {provided.placeholder}
-                  </Boards>
-                )}
-              </Droppable>
-            </>
+                  {provided.placeholder}
+                </Boards>
+              )}
+            </Droppable>
           ))}
         </Container>
       </DragDropContext>

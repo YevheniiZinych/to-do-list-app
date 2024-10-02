@@ -68,8 +68,8 @@ export const ModalMain: React.FC<ModalMain> = ({
 
   useEffect(() => {
     if (text === "Edit card") {
-      setTitle(name);
-      setDescription(descr);
+      setTitle(name || "");
+      setDescription(descr || "");
     } else {
       setTitle("");
       setDescription("");
@@ -101,7 +101,7 @@ export const ModalMain: React.FC<ModalMain> = ({
     e.preventDefault();
 
     if (text === "Edit card") {
-      handleUpdateTodo(id, { title, description });
+      handleUpdateTodo(id || "", { title, description });
     } else {
       const { elements } = e.currentTarget as HTMLFormElement & {
         elements: { title: HTMLInputElement; description: HTMLInputElement };
@@ -110,7 +110,7 @@ export const ModalMain: React.FC<ModalMain> = ({
       handleCreateTodo({
         title: elements.title.value,
         description: elements.description.value,
-        status,
+        status: status || "",
       });
     }
 
