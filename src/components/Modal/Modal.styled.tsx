@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import TextField from "@mui/material/TextField";
-import { MainBtn } from "../../style-templates/MainBtn.styled";
+import { MainBtn } from "../../style-templates/MainBtn.styled.tsx";
 
 export const Form = styled.form`
   display: flex;
@@ -15,7 +15,6 @@ export const StyledTextField = styled(TextField)(() => ({
     height: "40px",
     marginBottom: "15px",
   },
-  // "& .MuiInputBase-root": {},
 
   "& .MuiFormLabel-root": {
     top: "-7px",

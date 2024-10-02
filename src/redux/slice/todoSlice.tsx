@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export interface Todo {
+export interface DataTodo {
   id: string;
   title: string;
   description: string;
@@ -9,7 +9,13 @@ export interface Todo {
   status: "ToDo" | "In Progress" | "Done";
 }
 
-interface CreateTodo {
+export interface ServerResponse {
+  data: DataTodo[];
+  status: number;
+  success: boolean;
+}
+
+export interface CreateTodo {
   title: string;
   description: string;
   status: string;
@@ -32,12 +38,12 @@ export const todosApi = createApi({
   }),
   tagTypes: ["Todo"],
   endpoints: (builder) => ({
-    getTodos: builder.query<Todo[], void>({
+    getTodos: builder.query<ServerResponse, void>({
       query: () => "/todo",
-      providesTags: ({ data }) =>
-        data
+      providesTags: (result) =>
+        result?.data
           ? [
-              ...data.map(({ id }) => ({ type: "Todo", id } as const)),
+              ...result.data.map(({ id }) => ({ type: "Todo", id } as const)),
               { type: "Todo", id: "LIST" },
             ]
           : [{ type: "Todo", id: "LIST" }],

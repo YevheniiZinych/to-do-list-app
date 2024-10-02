@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   useUpdateTodoMutation,
   useDeleteTodoMutation,
-  Todo,
 } from "../../redux/slice/todoSlice.jsx";
 import {
   DragDropContext,
@@ -21,34 +20,21 @@ import {
   CardBtnWrapp,
   DeleteBtn,
   BoardList,
-} from "./Board.styled.jsx";
+} from "./Board.styled";
+
 import { ModalMain } from "../Modal/Modal.tsx";
+import { DataTodo } from "../../redux/slice/todoSlice.jsx";
 
 interface UpdateStatus {
   status: string;
 }
 
-interface TodoData {
-  createdAt: string;
-  description: string;
-  id: string;
-  status: string;
-  title: string;
-  updatedAt: string;
-}
-
 interface BoardProps {
-  status: number;
-  success: boolean;
-  todos: {
-    data: TodoData[];
-  };
+  data: DataTodo[];
 }
 
-export const Board: React.FC<BoardProps> = ({ todos }) => {
-  const { data } = todos;
-
-  const [localTodos, setLocalTodos] = useState<TodoData[]>(data);
+export const Board: React.FC<BoardProps> = ({ data }) => {
+  const [localTodos, setLocalTodos] = useState<DataTodo[]>(data);
 
   const [updateTodo] = useUpdateTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
@@ -65,7 +51,7 @@ export const Board: React.FC<BoardProps> = ({ todos }) => {
     await updateTodo({ id, data });
   };
 
-  const reorder = (list: TodoData[], startIndex: number, endIndex: number) => {
+  const reorder = (list: DataTodo[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -78,23 +64,35 @@ export const Board: React.FC<BoardProps> = ({ todos }) => {
     const { source, destination } = result;
 
     if (source.droppableId === destination.droppableId) {
+      const filteredTodos = localTodos.filter(
+        (todo) => todo.status === source.droppableId
+      );
       const reorderedTodos = reorder(
-        localTodos.filter((todo) => todo.status === source.droppableId),
+        filteredTodos,
         source.index,
         destination.index
       );
+      const result = localTodos.map((todo) => {
+        if (todo.status === source.droppableId) {
+          const reorderedTodo = reorderedTodos.shift();
+          // Перевірка на undefined перед присвоєнням
+          return reorderedTodo ? reorderedTodo : todo;
+        }
+        return todo;
+      });
 
-      setLocalTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo.status === source.droppableId ? reorderedTodos.shift() : todo
-        )
-      );
+      setLocalTodos(result);
+
+      // setLocalTodos((prevTodos) =>
+      //   prevTodos.map((todo) =>
+      //     todo.status === source.droppableId ? reorderedTodos.shift() : todo
+      //   )
+      // );
     } else {
-      // Якщо картка переміщується в іншу колонку
       const draggedTodo = data.find((todo) => todo.id === result.draggableId);
 
       if (draggedTodo) {
-        const newStatus = destination.droppableId as Todo["status"];
+        const newStatus = destination.droppableId as DataTodo["status"];
         handleUpdateTodo(draggedTodo.id, { status: newStatus });
       }
     }

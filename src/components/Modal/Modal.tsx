@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import {
   useCreateTodoMutation,
   useUpdateTodoMutation,
@@ -12,10 +11,12 @@ import {
   StyledTextField,
   AddBtn,
   CloseBtn,
-} from "./Modal.styled.jsx";
+} from "./Modal.styled.js";
+
+import { CreateTodo } from "../../redux/slice/todoSlice";
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -29,9 +30,9 @@ const style = {
 export interface ModalMain {
   status?: string;
   text: string;
-  id: string;
-  name: string;
-  descr: string;
+  id?: string;
+  name?: string;
+  descr?: string;
 }
 
 export interface TodoData {
@@ -75,7 +76,7 @@ export const ModalMain: React.FC<ModalMain> = ({
     }
   }, [name, descr, text]);
 
-  const handleCreateTodo = async (data: TodoData) => {
+  const handleCreateTodo = async (data: CreateTodo) => {
     await createTodo(data);
   };
 
@@ -120,9 +121,7 @@ export const ModalMain: React.FC<ModalMain> = ({
 
   return (
     <div>
-      <OpenBtn onClick={handleOpen} text={text}>
-        {text}
-      </OpenBtn>
+      <OpenBtn onClick={handleOpen}>{text}</OpenBtn>
       <Modal
         keepMounted
         open={open}

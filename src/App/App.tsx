@@ -1,11 +1,9 @@
 import { useGetTodosQuery } from "../redux/slice/todoSlice";
-import { GlobalStyle } from "../GlobalStyle.jsx";
-
 import "../App.css";
 import { Board } from "../components/Board/Board";
-
+import { GlobalStyle } from "../GlobalStyle";
 export const App: React.FC = () => {
-  const { data: todos, isLoading, isError } = useGetTodosQuery();
+  const { data: todos, isLoading } = useGetTodosQuery();
 
   if (isLoading)
     return (
@@ -17,7 +15,7 @@ export const App: React.FC = () => {
   return (
     <>
       <GlobalStyle />
-      <Board todos={todos} />
+      <Board data={todos?.data || []} />
     </>
   );
 };
