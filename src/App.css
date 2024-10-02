@@ -1,0 +1,29 @@
+.item {
+  list-style: none;
+  height: 80px;
+  width: 250px;
+  background-color: #fff;
+
+  margin-bottom: 20px;
+
+  color: black;
+}
+
+h1 {
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+  color: black;
+}
+
+h3 {
+  color: black;
+}
+
+.container {
+  height: 90vh;
+}

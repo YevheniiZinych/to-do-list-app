@@ -1,36 +1,63 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+export interface Todo {
+  id: string;
+  title: string;
+  description: string;
+  createdAt?: string;
+  updatedAt?: string;
+  status: "ToDo" | "In Progress" | "Done";
+}
+
+interface CreateTodo {
+  title: string;
+  description: string;
+  status: string;
+}
+
+interface UpdateTodo {
+  id: string;
+
+  data?: {
+    title?: string;
+    description?: string;
+    status?: string;
+  };
+}
+
 export const todosApi = createApi({
   reducerPath: "todosApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://to-do-list-api-fc3t.onrender.com",
+    baseUrl: "https://to-do-list-api-fc3t.onrender.com/api",
   }),
   tagTypes: ["Todo"],
   endpoints: (builder) => ({
     getTodos: builder.query<Todo[], void>({
       query: () => "/todo",
-      providesTags: (result) =>
-        result
+      providesTags: ({ data }) =>
+        data
           ? [
-              ...result.map(({ id }) => ({ type: "Todo", id } as const)),
+              ...data.map(({ id }) => ({ type: "Todo", id } as const)),
               { type: "Todo", id: "LIST" },
             ]
           : [{ type: "Todo", id: "LIST" }],
     }),
-    createTodo: builder.mutation<Todo, Partial<Todo>>({
+    createTodo: builder.mutation<CreateTodo, Partial<CreateTodo>>({
       query: (newTodo) => ({
-        url: "/todo",
+        url: "/todo/create",
         method: "POST",
         body: newTodo,
       }),
       invalidatesTags: [{ type: "Todo", id: "LIST" }],
     }),
-    updateTodo: builder.mutation<Todo, Partial<Todo>>({
-      query: ({ id, ...todo }) => ({
-        url: `/todo/${id}`,
-        method: "PUT",
-        body: todo,
-      }),
+    updateTodo: builder.mutation<UpdateTodo, Partial<UpdateTodo>>({
+      query: ({ id, ...todo }) => {
+        return {
+          url: `/todo/${id}`,
+          method: "PUT",
+          body: todo.data,
+        };
+      },
       invalidatesTags: (result, error, { id }) => [{ type: "Todo", id }],
     }),
     deleteTodo: builder.mutation<{ success: boolean; id: string }, string>({
@@ -43,20 +70,9 @@ export const todosApi = createApi({
   }),
 });
 
-// Export hooks for usage in functional components
 export const {
   useGetTodosQuery,
   useCreateTodoMutation,
   useUpdateTodoMutation,
   useDeleteTodoMutation,
 } = todosApi;
-
-// Define the Todo interface
-export interface Todo {
-  id: string;
-  title: string;
-  description: string;
-  createdAt?: string;
-  updatedAt?: string;
-  status: "ToDo" | "In Progress" | "Done";
-}
